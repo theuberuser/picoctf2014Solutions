@@ -1,0 +1,16 @@
+wordlist=$2
+encryptedfile=$1
+echo -e "Starting bruteforce attack on '${encryptedfile}' using wordlist '${wordlist}'"
+
+time for word in $(cat $wordlist); do 
+echo "WORD: $word"
+echo -n "PLAINTEXT: "; python zorkeymaker.py `cat $encryptedfile` "$word"|tee results
+plaintext=`grep -m 1 -ia daedalus results`
+if [[ $? -eq 0 ]]; then
+echo -en '\e[0;32m'"\033[1mS\033[0m"   # Green
+echo -e "******* BOOM! YOU BROKE THE CODE! *********\nWORD: '$word'\n"
+echo "PLAINTEXT: ${plaintext}"
+echo -e '\e[0m'
+exit
+fi
+done
